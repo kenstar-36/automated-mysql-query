@@ -1,0 +1,9 @@
+# Here are the cronjobs to run the main script, as well as log retention and housekeeping.
+#This runs the main script every 5 minutes.
+*/5 * * * * /home/[REDACTED]/any-name/query_and_delete.sh >/dev/null 2>&1
+# This runs every hour and archives log files that are older than 5 hours into the logs/archive directory.
+0 * * * * find /home/[REDACTED]/any-name/logs -type f -mmin +359 -exec mv {} /home/[REDACTED]/any-name/logs/archive/ \;
+# This runs at 1am daily and creates a directory in the logs/archive directory named after yesterday's date.
+0 1 * * * mkdir /home/[REDACTED]/any-name/logs/archive/$(date -d "yesterday" +"%d-%m-%Y");
+# This runs at 1am daily and housekeeps the logs by organizing them in the logs/archive directory.
+0 1 * * * find /home/[REDACTED]/any-name/logs/archive/*$(date -d "yesterday" +"%d-%m-%Y")* -maxdepth 0 -exec mv {} /home/[REDACTED]/any-name/logs/archive/$(date -d "yesterday" +"%d-%m-%Y")/ \;
